@@ -1,0 +1,41 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: vamsi-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: fashions
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: ./backend
+    container_name: vamsi-backend
+    restart: always
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root123
+      DB_NAME: fashions
+      PORT: 8080
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    container_name: vamsi-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql_data:

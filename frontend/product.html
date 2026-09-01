@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details - Vamsi Krishna Fashions</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            color: #222;
+        }
+
+        header {
+
+            height: 80px;
+
+            background: #111;
+
+            color: white;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 0 7%;
+
+        }
+
+        header h2 {
+            font-size: 27px;
+        }
+
+        header a {
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 17px;
+
+        }
+
+        .product-container {
+
+            max-width: 1100px;
+
+            margin: 70px auto;
+
+            background: white;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            box-shadow:
+                0 10px 40px rgba(0,0,0,0.1);
+
+        }
+
+        .product-image {
+
+            height: 650px;
+
+            background: #eee;
+
+        }
+
+        .product-image img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+        }
+
+        .product-details {
+
+            padding: 60px 50px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+        }
+
+        .category {
+
+            color: #888;
+
+            text-transform: uppercase;
+
+            letter-spacing: 3px;
+
+            font-size: 14px;
+
+            margin-bottom: 15px;
+
+        }
+
+        .product-details h1 {
+
+            font-size: 48px;
+
+            margin-bottom: 20px;
+
+        }
+
+        .price {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            margin-bottom: 25px;
+
+        }
+
+        .description {
+
+            color: #666;
+
+            line-height: 1.7;
+
+            margin-bottom: 30px;
+
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-bottom: 30px;
+
+        }
+
+        td {
+
+            padding: 14px;
+
+            border-bottom: 1px solid #ddd;
+
+        }
+
+        td:first-child {
+
+            font-weight: bold;
+
+            width: 40%;
+
+        }
+
+        .buy-button {
+
+            background: #111;
+
+            color: white;
+
+            border: none;
+
+            padding: 17px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            border-radius: 5px;
+
+        }
+
+        .buy-button:hover {
+
+            background: #d4af37;
+
+        }
+
+        @media(max-width: 800px) {
+
+            .product-container {
+
+                grid-template-columns: 1fr;
+
+                margin: 20px;
+
+            }
+
+            .product-image {
+
+                height: 450px;
+
+            }
+
+            .product-details {
+
+                padding: 35px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<header>
+
+    <h2>Vamsi Krishna Fashions</h2>
+
+    <a href="index.html">
+        ← Back to Products
+    </a>
+
+</header>
+
+
+<div class="product-container">
+
+    <div class="product-image">
+
+        <img id="productImage" src="" alt="Product">
+
+    </div>
+
+
+    <div class="product-details">
+
+        <p id="category" class="category"></p>
+
+        <h1 id="name"></h1>
+
+        <p id="price" class="price"></p>
+
+        <p id="description" class="description"></p>
+
+
+        <table>
+
+            <tr>
+
+                <td>Product ID</td>
+
+                <td id="id"></td>
+
+            </tr>
+
+            <tr>
+
+                <td>Category</td>
+
+                <td id="categoryTable"></td>
+
+            </tr>
+
+            <tr>
+
+                <td>Available Size</td>
+
+                <td id="size"></td>
+
+            </tr>
+
+            <tr>
+
+                <td>Color</td>
+
+                <td id="color"></td>
+
+            </tr>
+
+            <tr>
+
+                <td>Stock</td>
+
+                <td id="stock"></td>
+
+            </tr>
+
+        </table>
+
+
+        <button class="buy-button">
+
+            ADD TO CART
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API_URL =
+    "http://3.109.203.190:8080";
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const productId =
+    params.get("id");
+
+
+fetch(`${API_URL}/api/products/${productId}`)
+
+.then(response => response.json())
+
+.then(product => {
+
+    document.getElementById("productImage").src =
+        product.image;
+
+    document.getElementById("productImage").alt =
+        product.name;
+
+    document.getElementById("name").innerText =
+        product.name;
+
+    document.getElementById("category").innerText =
+        product.category;
+
+    document.getElementById("categoryTable").innerText =
+        product.category;
+
+    document.getElementById("price").innerText =
+        "₹" + product.price;
+
+    document.getElementById("description").innerText =
+        product.description;
+
+    document.getElementById("id").innerText =
+        product.id;
+
+    document.getElementById("size").innerText =
+        product.size;
+
+    document.getElementById("color").innerText =
+        product.color;
+
+    document.getElementById("stock").innerText =
+        product.stock;
+
+})
+
+.catch(error => {
+
+    console.error(error);
+
+});
+
+</script>
+
+
+</body>
+
+</html>

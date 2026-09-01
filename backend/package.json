@@ -1,17 +1,13 @@
 {
-  "name": "vamsi-krishna-fashions-backend",
+  "name": "vamsi-fashions-backend",
   "version": "1.0.0",
-  "description": "Backend API for Vamsi Krishna Fashions",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^4.22.2"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5"
+  }
 }

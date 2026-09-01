@@ -1,82 +1,80 @@
 const express = require("express");
+const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
 
-const PORT = 5000;
-
 app.use(cors());
 app.use(express.json());
 
-const products = [
-    {
-        id: 1,
-        name: "Premium Linen Shirt",
-        category: "Men",
-        price: 1299,
-        image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"
-    },
-    {
-        id: 2,
-        name: "Linen Casual Pant",
-        category: "Men",
-        price: 1499,
-        image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80"
-    },
-    {
-        id: 3,
-        name: "Classic White Linen Shirt",
-        category: "Men",
-        price: 1199,
-        image: "https://images.unsplash.com/photo-1603252110481-7ba873bf42ab"
-    },
-    {
-        id: 4,
-        name: "Premium Formal Pant",
-        category: "Men",
-        price: 1599,
-        image: "https://images.unsplash.com/photo-1506629905607-d9c297d7b6c5"
-    },
-    {
-        id: 5,
-        name: "Traditional Kurta",
-        category: "Men",
-        price: 999,
-        image: "https://images.unsplash.com/photo-1597983073493-88cd35cf93a0"
-    },
-    {
-        id: 6,
-        name: "Designer Women's Dress",
-        category: "Women",
-        price: 1899,
-        image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8"
-    }
-];
+const db = mysql.createPool({
+    host: process.env.DB_HOST || "mysql",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "root123",
+    database: process.env.DB_NAME || "fashions",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
-app.get("/", (req, res) => {
-    res.json({
-        message: "Welcome to Vamsi Krishna Fashions API"
+// Test database connection
+db.getConnection((err, connection) => {
+    if (err) {
+        console.error("Database connection failed:", err.message);
+    } else {
+        console.log("MySQL connected successfully");
+        connection.release();
+    }
+});
+
+// Get all products
+app.get("/api/products", (req, res) => {
+    const sql = "SELECT * FROM products";
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).json({
+                error: err.message
+            });
+        }
+
+        res.json(results);
     });
 });
 
-app.get("/api/products", (req, res) => {
-    res.json(products);
-});
-
+// Get one product
 app.get("/api/products/:id", (req, res) => {
 
-    const product = products.find(
-        p => p.id === parseInt(req.params.id)
-    );
+    const id = req.params.id;
 
-    if (!product) {
-        return res.status(404).json({
-            message: "Product not found"
-        });
-    }
+    const sql = "SELECT * FROM products WHERE id = ?";
 
-    res.json(product);
+    db.query(sql, [id], (err, results) => {
+
+        if (err) {
+            return res.status(500).json({
+                error: err.message
+            });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({
+                message: "Product not found"
+            });
+        }
+
+        res.json(results[0]);
+    });
 });
+
+// Health check
+app.get("/", (req, res) => {
+    res.json({
+        message: "Vamsi Fashions Backend is running"
+    });
+});
+
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
     console.log(`Backend running on port ${PORT}`);
